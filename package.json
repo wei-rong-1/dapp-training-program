@@ -1,0 +1,25 @@
+{
+  "name": "@dapp-training-program/main",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "husky install"
+  },
+  "workspaces": {
+    "packages": [
+      "week-1/*"
+    ],
+    "nohoist": [
+      "**/@graphprotocol/graph-ts",
+      "**/@graphprotocol/graph-ts/**",
+      "**/hardhat",
+      "**/hardhat/**",
+      "**/hardhat-ts",
+      "**/hardhat-ts/**"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "^7.0.2"
+  }
+}
