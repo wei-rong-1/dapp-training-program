@@ -1,12 +1,15 @@
 import { ethers } from "ethers";
 import { Button, InputNumber, Col, Row, Table, Alert } from "antd";
 import React, { useEffect, useState, useMemo } from "react";
+import * as multicall2Artifact from "../contracts/Multicall2.json";
 
 function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetwork }) {
   const [contract, setContract] = useState();
+  const [multicallContract, setMulticallContract] = useState();
   const [batchId, setBatchId] = useState(Math.floor(Date.now() / 1000));
   const [reported, setReported] = useState(false);
   const [fetched, setFetched] = useState(false);
+  const [inBatch, setInBatch] = useState(false);
   const [weatherData, setWeatherData] = useState();
   const [loadedWeatherData, setLoadedWeatherData] = useState();
   const abi = [
@@ -14,10 +17,14 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
     "function getWeather(uint32 batchId, bytes32 cityName) public view returns (uint32)",
   ];
 
+  const contractAddress = "0x49354813d8BFCa86f778DfF4120ad80E4D96D74E";
+  const multical2ContractAddress = "0x934Ea877487E0ed6B92bf715D7A7EE968B5E7bc9";
+
   useEffect(() => {
     let providerOrSigner = userSigner ? userSigner : localProvider;
     if (providerOrSigner) {
-      setContract(new ethers.Contract("0x49354813d8BFCa86f778DfF4120ad80E4D96D74E", abi, providerOrSigner));
+      setContract(new ethers.Contract(contractAddress, abi, providerOrSigner));
+      setMulticallContract(new ethers.Contract(multical2ContractAddress, multicall2Artifact.abi, providerOrSigner));
     }
   }, [userSigner, localProvider]);
 
@@ -85,10 +92,15 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
       key: "hongkong",
     },
     {
-      name: "London",
-      key: "london",
+      name: "Beijing",
+      key: "beijing",
     },
+    // {
+    //   name: "London",
+    //   key: "london",
+    // },
   ];
+
   // 1656701375
   // 1656904195
 
@@ -99,20 +111,19 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
     return matched ? parseFloat(matched[0]) : 0;
   };
 
-  const fetchWeatherData = async function () {
+  const fetchWeatherData = async function (reportInBatch = false) {
     const tempResults = await Promise.all(cities.map(({ key }) => fetchWeatherOfCity(key)));
     const data = tempResults.map((temp, i) => {
       return { ...cities[i], temp, status: "processing" };
     });
 
     setWeatherData(data);
+    setInBatch(reportInBatch);
     setFetched(true);
+    setReported(false);
   };
 
   const reportWeatherData = async () => {
-    console.log("contract: ", contract, userSigner);
-
-    console.log("batchId: ", batchId, typeof batchId === "number");
     const txs = await Promise.all(
       weatherData.map(({ key, temp }) =>
         contract.reportWeather(batchId, ethers.utils.formatBytes32String(key), Math.round(temp * 1e2)),
@@ -128,11 +139,40 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
 
     setWeatherData(newWeatherData);
     setReported(true);
+    setFetched(false);
+  };
+
+  const reportWeatherDataInBatch = async () => {
+    let calls = weatherData.map(({ key, temp }) => ({
+      target: contractAddress,
+      callData: contract.interface.encodeFunctionData("reportWeather", [
+        batchId,
+        ethers.utils.formatBytes32String(key),
+        Math.round(temp * 1e2),
+      ]),
+    }));
+
+    const tx = await multicallContract.aggregate(calls);
+    const txResult = await tx.wait();
+
+    const newWeatherData = weatherData.map(rec => ({
+      ...rec,
+      status: txResult.blockHash ? "success" : "failed",
+    }));
+
+    setWeatherData(newWeatherData);
+    setReported(true);
+    setFetched(false);
   };
 
   useEffect(() => {
     if (fetched) {
-      reportWeatherData();
+      if (inBatch) {
+        reportWeatherDataInBatch();
+      } else {
+        reportWeatherData();
+      }
+      setInBatch(false);
     }
   }, [fetched]);
 
@@ -148,16 +188,38 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
     setLoadedWeatherData(data);
   };
 
+  const loadWeatherDataInBatch = async () => {
+    let calls = cities.map(({ key }) => ({
+      target: contractAddress,
+      callData: contract.interface.encodeFunctionData("getWeather", [batchId, ethers.utils.formatBytes32String(key)]),
+    }));
+
+    const res = await multicallContract.callStatic.aggregate(calls);
+    let results = res.returnData.map(result => {
+      return contract.interface.decodeFunctionResult("getWeather", result);
+    });
+
+    const data = results.map((temp, i) => {
+      return { ...cities[i], temp: temp / 1e2 };
+    });
+
+    setLoadedWeatherData(data);
+  };
+
   return (
     <div>
       <Row justify="center" style={{ margin: 35 }}>
         <Col span={12}>
           {!isRightNetwork ? (
-            <Alert message="Wrong network, should be testnet" type="warning" action={
-              <Button size="small" type="primary" onClick={() => setSelectedNetwork('testnet')}>
-                Select Testnet
-              </Button>
-            } />
+            <Alert
+              message="Wrong network, should be testnet"
+              type="warning"
+              action={
+                <Button size="small" type="primary" onClick={() => setSelectedNetwork("testnet")}>
+                  Select Testnet
+                </Button>
+              }
+            />
           ) : !userSigner ? (
             <Alert message="Please connect your wallet first" type="warning" />
           ) : (
@@ -196,24 +258,39 @@ function Assignment2({ userSigner, localProvider, targetNetwork, setSelectedNetw
               >
                 Report Weather
               </Button>
+              <Button
+                type="primary"
+                style={{ marginLeft: 15 }}
+                disabled={!(isRightNetwork && userSigner && isRightProvider)}
+                onClick={() => fetchWeatherData(true)}
+              >
+                Batch Report Weather
+              </Button>
             </Col>
           </Row>
           <p>Notice: there will be 3 transactions to sign by your wallet, please sign them all. </p>
-
 
           <div style={{ marginTop: 50 }}>
             <Table columns={columns} dataSource={weatherData} pagination={false} />
           </div>
 
           <div style={{ marginTop: 50 }}>
-            <div style={{ textAlign: "right", margin: 15 }}>
-              <Button type="primary" disabled={!isRightNetwork} onClick={() => loadWeatherData()}>
-                Load Weather
-              </Button>
-              <Button type="primary" disabled={!isRightNetwork} style={{ marginLeft: 15 }} onClick={() => {}}>
-                Batch Load Weather
-              </Button>
-            </div>
+            <Row align="middle" gutter={15} style={{ padding: 15 }}>
+              <Col>Batch ID: {batchId}</Col>
+              <Col flex={1} style={{ textAlign: "right" }}>
+                <Button type="primary" disabled={!isRightNetwork} onClick={() => loadWeatherData()}>
+                  Load Weather
+                </Button>
+                <Button
+                  type="primary"
+                  disabled={!isRightNetwork}
+                  style={{ marginLeft: 15 }}
+                  onClick={() => loadWeatherDataInBatch()}
+                >
+                  Batch Load Weather
+                </Button>
+              </Col>
+            </Row>
             <Table columns={columns.slice(0, -1)} dataSource={loadedWeatherData} pagination={false} />
           </div>
         </Col>
