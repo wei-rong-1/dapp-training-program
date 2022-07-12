@@ -10,7 +10,11 @@ cd week-1/assignment-1-and-2
 
 ## Week 2
 
-TBD
+The assignment are under this path: __week-2/guess-number-game__, please go and check.
+
+````
+cd week-2/guess-number-game
+````
 
 ## Week 3
 
