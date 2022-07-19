@@ -8,7 +8,8 @@
   "workspaces": {
     "packages": [
       "week-1/*",
-      "week-2/*"
+      "week-2/*",
+      "week-3/*"
     ],
     "nohoist": [
       "**/@graphprotocol/graph-ts",
