@@ -15,12 +15,22 @@
     "nohoist": [
       "**/@graphprotocol/graph-ts",
       "**/@graphprotocol/graph-ts/**",
+      "**/circomlib",
+      "**/circomlib/**",
+      "**/circomlibjs",
+      "**/circomlibjs/**",
+      "**/snarkjs",
+      "**/snarkjs/**",
       "**/hardhat",
       "**/hardhat/**",
+      "**/hardhat-deploy",
+      "**/hardhat-deploy/**",
       "**/hardhat-ts",
       "**/hardhat-ts/**",
       "**/@nomicfoundation/hardhat-toolbox",
-      "**/@nomicfoundation/hardhat-toolbox/**"
+      "**/@nomicfoundation/hardhat-toolbox/**",
+      "**/@@nomiclabs/hardhat-ethers",
+      "**/@@nomiclabs/hardhat-ethers/**"
     ]
   },
   "dependencies": {},
