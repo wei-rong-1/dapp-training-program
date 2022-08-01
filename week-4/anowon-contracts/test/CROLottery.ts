@@ -166,7 +166,7 @@ describe("CROLottery", function () {
       proofData
     )
 
-    expect(await lottery.minimuxDifference()).to.be.eq(difference.toNumber())
+    expect(await lottery.minimumDifference()).to.be.eq(difference.toNumber())
     expect(await lottery.winnerCount()).to.be.eq(1)
     expect((await lottery.winners(0)).recipient).to.be.eq(user2.address)
   });
@@ -221,7 +221,7 @@ describe("CROLottery", function () {
       claimData3.proofData
     )
 
-    expect(await lottery.minimuxDifference()).to.be.eq(claimData3.difference.toNumber())
+    expect(await lottery.minimumDifference()).to.be.eq(claimData3.difference.toNumber())
     expect(await lottery.playerCount()).to.be.eq(3)
     expect(await lottery.winnerCount()).to.be.eq(1)
     expect((await lottery.winners(0)).recipient).to.be.eq(user3.address)

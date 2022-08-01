@@ -21,6 +21,8 @@
       "**/circomlibjs/**",
       "**/snarkjs",
       "**/snarkjs/**",
+      "**/fixed-merkle-tree",
+      "**/fixed-merkle-tree/**",
       "**/hardhat",
       "**/hardhat/**",
       "**/hardhat-deploy",

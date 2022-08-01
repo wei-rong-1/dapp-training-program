@@ -1,0 +1,148 @@
+{
+  "address": "0xe0B55AFE42E4fEBb79Ed010A934BC5a4f6865C3C",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_block",
+          "type": "uint256"
+        }
+      ],
+      "name": "isRandomized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "_range",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_nonce",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_block",
+          "type": "uint256"
+        }
+      ],
+      "name": "random",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "randomize",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_usedFunds",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "randomizedblocks",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x2d8c5b91d08a19daf923c3302ae989c839795d5f423b0778073c2c3283b90c7f",
+  "receipt": {
+    "to": null,
+    "from": "0xbe2a6f5Fc6E508e84E8dF1dfAf56Fcff2bcE768B",
+    "contractAddress": "0xe0B55AFE42E4fEBb79Ed010A934BC5a4f6865C3C",
+    "transactionIndex": 1,
+    "gasUsed": "180517",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf227a78f6758cfb4d2bd51371094bf5af519f227be61f0a1ace7de4abeebad26",
+    "transactionHash": "0x2d8c5b91d08a19daf923c3302ae989c839795d5f423b0778073c2c3283b90c7f",
+    "logs": [],
+    "blockNumber": 3955597,
+    "cumulativeGasUsed": "427799",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "b9f9e81232ce09ae78301df9295901db",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"isRandomized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"_range\",\"type\":\"uint32\"},{\"internalType\":\"uint256\",\"name\":\"_nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_block\",\"type\":\"uint256\"}],\"name\":\"random\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"randomize\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"_usedFunds\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"randomizedblocks\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/mocks/DummyWitnet.sol\":\"DummyWitnet\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":100},\"remappings\":[]},\"sources\":{\"contracts/mocks/DummyWitnet.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ncontract DummyWitnet {\\n    mapping(uint256 => bool) public randomizedblocks;\\n\\n    function isRandomized(uint256 _block) external view returns (bool) {\\n        return randomizedblocks[_block];\\n    }\\n\\n    function random(\\n        uint32 _range,\\n        uint256 _nonce,\\n        uint256 _block\\n    ) external pure returns (uint32) {\\n        return uint32(addmod(_block, _nonce, _range));\\n    }\\n\\n    function randomize() external payable returns (uint256 _usedFunds) {\\n        randomizedblocks[block.number] = true;\\n        payable(msg.sender).transfer(msg.value - 100 gwei);\\n        return 100 gwei;\\n    }\\n}\\n\",\"keccak256\":\"0x1be3195b6929dda561369a417105c24b6df78db3c450e7000f46ba1233814ff6\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061024e806100206000396000f3fe60806040526004361061003f5760003560e01c806324cbbfc114610044578063699b328a1461007e5780639bc86fec14610094578063a03ea495146100d4575b600080fd5b34801561005057600080fd5b5061006461005f366004610186565b610104565b60405163ffffffff90911681526020015b60405180910390f35b610086610125565b604051908152602001610075565b3480156100a057600080fd5b506100c46100af3660046101c4565b60009081526020819052604090205460ff1690565b6040519015158152602001610075565b3480156100e057600080fd5b506100c46100ef3660046101c4565b60006020819052908152604090205460ff1681565b60008363ffffffff168061011a5761011a6101dd565b838308949350505050565b436000908152602081905260408120805460ff19166001179055336108fc61015264174876e800346101f3565b6040518115909202916000818181858888f1935050505015801561017a573d6000803e3d6000fd5b5064174876e800905090565b60008060006060848603121561019b57600080fd5b833563ffffffff811681146101af57600080fd5b95602085013595506040909401359392505050565b6000602082840312156101d657600080fd5b5035919050565b634e487b7160e01b600052601260045260246000fd5b60008282101561021357634e487b7160e01b600052601160045260246000fd5b50039056fea2646970667358221220d1cd0900682a9ba935875548cc1c3826d25a432e4545b68de48f1ebb1e9b2fc564736f6c634300080d0033",
+  "deployedBytecode": "0x60806040526004361061003f5760003560e01c806324cbbfc114610044578063699b328a1461007e5780639bc86fec14610094578063a03ea495146100d4575b600080fd5b34801561005057600080fd5b5061006461005f366004610186565b610104565b60405163ffffffff90911681526020015b60405180910390f35b610086610125565b604051908152602001610075565b3480156100a057600080fd5b506100c46100af3660046101c4565b60009081526020819052604090205460ff1690565b6040519015158152602001610075565b3480156100e057600080fd5b506100c46100ef3660046101c4565b60006020819052908152604090205460ff1681565b60008363ffffffff168061011a5761011a6101dd565b838308949350505050565b436000908152602081905260408120805460ff19166001179055336108fc61015264174876e800346101f3565b6040518115909202916000818181858888f1935050505015801561017a573d6000803e3d6000fd5b5064174876e800905090565b60008060006060848603121561019b57600080fd5b833563ffffffff811681146101af57600080fd5b95602085013595506040909401359392505050565b6000602082840312156101d657600080fd5b5035919050565b634e487b7160e01b600052601260045260246000fd5b60008282101561021357634e487b7160e01b600052601160045260246000fd5b50039056fea2646970667358221220d1cd0900682a9ba935875548cc1c3826d25a432e4545b68de48f1ebb1e9b2fc564736f6c634300080d0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 5,
+        "contract": "contracts/mocks/DummyWitnet.sol:DummyWitnet",
+        "label": "randomizedblocks",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_uint256,t_bool)"
+      }
+    ],
+    "types": {
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+.lottery-admin {
+    padding: 0 30px;
+}
+
+.lottery-list {
+    padding: 30px;
+}
+
+.lottery-card + .lottery-card {
+    margin-top: 30px;
+}
+
+.lottery-hd {
+    border: 1px solid #acacac;
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    box-shadow: 1px 1px 15px #e7e7e7 inset;
+}
+
+.lottery-hd:hover {
+    border: 1px solid #666;
+}
+
+
+.lottery-bd {
+    border: 1px solid #acacac;
+    border-radius: 15px;
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #efefef;
+}
+
+.lottery-id {
+    display: inline-block;
+    width: 50px;
+    font-size: 16px;
+    margin-right: 30px;
+}
+
+.lottery-status {
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
+}
+
+.lottery-denomination {
+    display: inline-block;
+    width: 200px;
+}
+
+.lottery-block-info {
+    padding-right: 30px;
+    border-right: 1px solid #ccc;
+}
+
+.lottery-block-info > div {
+    line-height: 32px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.lottery-stat-info {
+    padding: 10px;
+    padding-left: 30px;
+}

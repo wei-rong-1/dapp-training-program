@@ -85,4 +85,6 @@ contract CROLotteryFactory is Ownable {
     function withdraw() external {
         payable(owner()).transfer(address(this).balance);
     }
+
+    receive() external payable {}
 }

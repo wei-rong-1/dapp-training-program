@@ -24,7 +24,7 @@ const deployFunction: DeployFunction = async function (
     artifact.bytecode,
     signer
   );
-  const hasher = await Hasher.deploy();
+  const hasher = await Hasher.deploy({ gasPrice: 5000000000000 });
 
   const proxyDeployments = {
     address: hasher.address,

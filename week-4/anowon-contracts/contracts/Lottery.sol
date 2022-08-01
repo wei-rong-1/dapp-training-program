@@ -19,7 +19,7 @@ abstract contract Lottery is Statusable, MerkleTree, Ownable {
     }
 
     uint32 public winningNumber;
-    uint32 public minimuxDifference;
+    uint32 public minimumDifference;
     uint32 public winnerCount;
     uint32 public playerCount;
 
@@ -73,7 +73,7 @@ abstract contract Lottery is Statusable, MerkleTree, Ownable {
             "Lottery: _verifier should not be null"
         );
 
-        minimuxDifference = type(uint32).max;
+        minimumDifference = type(uint32).max;
 
         id = _id;
         denomination = _denomination;
@@ -123,7 +123,7 @@ abstract contract Lottery is Statusable, MerkleTree, Ownable {
     ) external onlyStatus(Status.REVEALING) {
         require(isRoot(_root), "Lottery: wrong merkle root");
         require(
-            _difference <= minimuxDifference,
+            _difference <= minimumDifference,
             "Lottery: invalid _difference"
         );
 
@@ -143,7 +143,7 @@ abstract contract Lottery is Statusable, MerkleTree, Ownable {
             "Lottery: invalid proof"
         );
 
-        if (_difference == minimuxDifference) {
+        if (_difference == minimumDifference) {
             for (uint32 i = 0; i < winnerCount; i++) {
                 require(
                     winners[i].nullifierHash != _nullifierHash,
@@ -154,7 +154,7 @@ abstract contract Lottery is Statusable, MerkleTree, Ownable {
             for (uint32 i = 0; i < winnerCount; i++) {
                 delete (winners[i]);
             }
-            minimuxDifference = _difference;
+            minimumDifference = _difference;
             winnerCount = 0;
         }
 

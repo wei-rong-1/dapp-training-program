@@ -23,6 +23,7 @@ const deployFunction: DeployFunction = async function (
       DummyTCRO.address,
     ],
     log: true,
+    gasPrice: '5000000000000',
   });
 
   return true;

@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
-import "hardhat-deploy-ethers";
+// import "hardhat-deploy-ethers";
 
 task('hasher', 'Compile Poseidon hasher').setAction(async () => {
   require('./scripts/compileHasher.ts')
@@ -19,12 +19,15 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      allowUnlimitedContractSize: true,
+      tags: ["hardhat"],
+      // forking: {
+      //   url: "https://rpc.vvs.finance",
+      // }
     },
     localhost: {
       saveDeployments: true,
       tags: ["devnet"],
-      url: "http://127.0.0.1:7545",
+      url: "http://127.0.0.1:8545",
     },
     testnet: {
       saveDeployments: true,

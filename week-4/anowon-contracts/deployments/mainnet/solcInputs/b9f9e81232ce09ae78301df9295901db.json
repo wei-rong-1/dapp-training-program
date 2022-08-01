@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/mocks/DummyWitnet.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract DummyWitnet {\n    mapping(uint256 => bool) public randomizedblocks;\n\n    function isRandomized(uint256 _block) external view returns (bool) {\n        return randomizedblocks[_block];\n    }\n\n    function random(\n        uint32 _range,\n        uint256 _nonce,\n        uint256 _block\n    ) external pure returns (uint32) {\n        return uint32(addmod(_block, _nonce, _range));\n    }\n\n    function randomize() external payable returns (uint256 _usedFunds) {\n        randomizedblocks[block.number] = true;\n        payable(msg.sender).transfer(msg.value - 100 gwei);\n        return 100 gwei;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 100
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
