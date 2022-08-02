@@ -88,28 +88,25 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
       {
         <div className="lottery-admin">
           <Row>
-            <Col span={4}>
               {
                 isFactoryOwner &&
-                <LotteryNew
+                <Col ><LotteryNew
                   factoryContract={factoryContract}
                   visible={newLotteryVisible}
                   setVisible={setNewLotteryVisible}
                   onCreate={handleLotteryCreated}
-                />
+                /></Col>
               }
-            </Col>
-            <Col span={4}>
+            
               { targetNetwork.name === 'localhost' &&
-                <AdminTool
+                <Col style={{ marginLeft: "15px"}}><AdminTool
                   userSigner={userSigner}
                   localProvider={localProvider}
                   targetNetwork={targetNetwork}
                   currentBlock={currentBlock}
-                />
+                /></Col>
               }
-              <a style={{ marginLeft: "15px" }} onClick={handleReload}>Reload</a>
-            </Col>
+              <a style={{ marginLeft: "15px",lineHeight: "36px" }} onClick={handleReload}>Reload</a>
           </Row>
         </div>
       }

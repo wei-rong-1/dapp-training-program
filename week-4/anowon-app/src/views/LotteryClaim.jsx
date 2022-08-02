@@ -91,7 +91,6 @@ export default function LotteryClaim({ visible, setVisible, lotteryContract, use
           wrapperCol={{ span: 16 }}
           onFinish={handleFinish}
           onFinishFailed={handleFinishFailed}
-          initialValues={{ recipient: userSigner.address }}
           autoComplete="off"
         >
           <Form.Item
