@@ -4,7 +4,7 @@ import { Button, Col, Row, Tooltip, message, Modal, Form, Input, InputNumber, Ra
 import { ReloadOutlined } from "@ant-design/icons";
 import { getCommitment } from "../helpers/ZkUtils";
 
-export default function LotteryCommit({ visible, setVisible, lotteryContract, ...props }) {
+export default function LotteryCommit({ visible, setVisible, lotteryContract, onSuccess, ...props }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -18,6 +18,7 @@ export default function LotteryCommit({ visible, setVisible, lotteryContract, ..
       const receipt = await tx.wait();
       if (receipt.blockNumber > 0) {
         message.success("Commit successfully");
+        onSuccess()
       } else {
         message.error("Failed to commit");
       }
@@ -57,7 +58,7 @@ export default function LotteryCommit({ visible, setVisible, lotteryContract, ..
           onFinishFailed={handleFinishFailed}
           autoComplete="off"
         >
-          <Form.Item label="Nullifier" name="nullifier">
+          <Form.Item label="Nullifier" tooltip="31 bytes random text">
             <Input.Group>
               <Form.Item
                 name="nullifier"
@@ -74,6 +75,7 @@ export default function LotteryCommit({ visible, setVisible, lotteryContract, ..
 
           <Form.Item
             label="Secret Number"
+            tooltip="A number range from 0 to 2 to the power of 32. (0, 2**32)"
             name="secret"
             rules={[{ required: true, message: "Please input commitment secret number" }]}
           >

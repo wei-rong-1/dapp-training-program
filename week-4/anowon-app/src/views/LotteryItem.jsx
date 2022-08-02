@@ -5,7 +5,7 @@ import LotteryCommit from "./LotteryCommit";
 import LotteryReveal from "./LotteryReveal";
 import LotteryClaim from "./LotteryClaim";
 
-export default function LotteryItem({ lottery, currentBlock, userSigner, ...props }) {
+export default function LotteryItem({ lottery, currentBlock, userSigner, onChange, ...props }) {
   const [lotteryContract, setLotteryContract] = useState();
   const [actionLoading, setActionLoading] = useState(false);
   const [currentAction, setCurrentAction] = useState();
@@ -46,6 +46,7 @@ export default function LotteryItem({ lottery, currentBlock, userSigner, ...prop
       } else {
         message.error("Failed to prepare")
       }
+      onChange(lottery.id)
     } catch {
       message.error("Failed to prepare")
     } finally {
@@ -62,20 +63,21 @@ export default function LotteryItem({ lottery, currentBlock, userSigner, ...prop
     setActionLoading(true);
     setCurrentAction('finalize');
 
-    // try {
+    try {
       const tx = await lotteryContract.finalize()
-      const receipt = tx.wait()
+      const receipt = await tx.wait()
       if (receipt.blockNumber) {
         message.success("Finalize successfully")
       } else {
         message.error("Failed to finalize")
       }
-    // } catch {
-    //   message.error("Failed to finalize")
-    // } finally {
+      onChange(lottery.id)
+    } catch {
+      message.error("Failed to finalize")
+    } finally {
       setActionLoading(false)
       setCurrentAction(null);
-    // }
+    }
   }
 
   useEffect(() => {
@@ -129,12 +131,14 @@ export default function LotteryItem({ lottery, currentBlock, userSigner, ...prop
           visible={commitLotteryVisible}
           setVisible={setCommitLotteryVisible}
           lotteryContract={lotteryContract}
+          onSuccess={() => onChange(lottery.id)}
         />
 
         <LotteryReveal 
           visible={revealLotteryVisible}
           setVisible={setRevealLotteryVisible}
           lotteryContract={lotteryContract}
+          onSuccess={() => onChange(lottery.id)}
         />
 
         <LotteryClaim
@@ -142,6 +146,7 @@ export default function LotteryItem({ lottery, currentBlock, userSigner, ...prop
           setVisible={setClaimLotteryVisible}
           lotteryContract={lotteryContract}
           userSigner={userSigner}
+          onSuccess={() => onChange(lottery.id)}
         />
 
         </Col>
@@ -194,7 +199,7 @@ export default function LotteryItem({ lottery, currentBlock, userSigner, ...prop
               <Statistic title="Player Count" value={lottery.playerCount?.toString()} />
             </Col>
             <Col span={8}>
-              <Statistic title="Current Bonus" value={lottery.currentBonus?.toString()} />
+              <Statistic title="Current Bonus" value={lottery.currentBonus ? ethers.utils.formatEther(lottery.currentBonus).toString() : '-'} />
             </Col>
           </Row>
           <Row gutter={15} style={{ marginTop: "20px" }}>

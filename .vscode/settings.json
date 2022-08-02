@@ -12,7 +12,7 @@
       "**/*.cs": true,
       "**/*.orig": true,
       "**/bin/": true,
-      "**/build/": true,
+      "**/build/": false,
       "**/debug/": true,
       "**/dist/": true,
       "**/obj": true,

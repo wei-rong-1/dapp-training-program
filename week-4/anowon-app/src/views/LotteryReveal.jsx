@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Tooltip, message, Modal, Form, Input, InputNumber, Radio } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 
-export default function LotteryReveal({ visible, setVisible, lotteryContract, ...props }) {
+export default function LotteryReveal({ visible, setVisible, lotteryContract, onSuccess, ...props }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -18,6 +18,7 @@ export default function LotteryReveal({ visible, setVisible, lotteryContract, ..
       const receipt = await tx.wait();
       if (receipt.blockNumber > 0) {
         message.success("Reveal successfully");
+        onSuccess()
       } else {
         message.error("Failed to reveal");
       }

@@ -4,7 +4,7 @@ import { Button, Col, Row, Tooltip, message, Modal, Form, Input, InputNumber, Ra
 import { ReloadOutlined } from "@ant-design/icons";
 import { getCommitment, generateProof, merkleTree, getNullifierHash } from "../helpers/ZkUtils";
 
-export default function LotteryClaim({ visible, setVisible, lotteryContract, userSigner, ...props }) {
+export default function LotteryClaim({ visible, setVisible, lotteryContract, userSigner, onSuccess, ...props }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -27,7 +27,7 @@ export default function LotteryClaim({ visible, setVisible, lotteryContract, use
     const commitment = await getCommitment(nullifier, secret);
     const nullifierHash = await getNullifierHash(nullifier);
     const commitments = await getCommitEvents();
-    console.log("getCommitEvents: ", commitments);
+    // console.log("getCommitEvents: ", commitments);
     const index = commitments.indexOf(commitment);
     const winningNumber = ethers.BigNumber.from(await lotteryContract.winningNumber());
     const myNumber = ethers.BigNumber.from(secret);
@@ -61,6 +61,7 @@ export default function LotteryClaim({ visible, setVisible, lotteryContract, use
       const receipt = await tx.wait();
       if (receipt.blockNumber > 0) {
         message.success("Claim successfully");
+        onSuccess()
       } else {
         message.error("Failed to claim");
       }

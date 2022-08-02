@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 
 import * as factoryArtifact from "../contracts/CROLotteryFactory.json";
 
+import AdminTool from "./AdminTool";
 import LotteryNew from "./LotteryNew";
 import LotteryList from "./LotteryList";
 
@@ -12,6 +13,7 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
   const [currentBlock, setCurrentBlock] = useState();
   const [factoryOwner, setFactoryOwner] = useState();
   const [signerAddress, setSignerAddress] = useState();
+  const [lotteryCount, setLotteryCount] = useState(0);
 
   const [newLotteryVisible, setNewLotteryVisible] = useState(false);
 
@@ -34,6 +36,11 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
     }
   }, [userSigner, localProvider, targetNetwork])
 
+  useEffect(() => {
+    fetchLotteryCount();
+  }, [factoryContract]);
+
+
   const fetchFactoryOwner = useCallback(async () => {
     if (factoryContract) {
       const factoryOwner = await factoryContract.owner();
@@ -41,12 +48,12 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
     }
   }, [factoryContract])
 
-  const fetchCurrentBlock = useCallback(async () => {
+  const fetchCurrentBlock = async () => {
     if (localProvider) {
       const currentBlock = await localProvider.getBlockNumber();
       setCurrentBlock(currentBlock)
     }
-  }, [localProvider])
+  }
 
   const fetchSignerAddress = useCallback(async () => {
     if (userSigner) {
@@ -56,22 +63,52 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
     }
   }, [userSigner])
 
+  const fetchLotteryCount = async () => {
+    if (!factoryContract) return;
+    const count = await factoryContract.counter();
+    setLotteryCount(count);
+  }
+
   const isFactoryOwner = useMemo(() => {
     return !!signerAddress && signerAddress === factoryOwner
   }, [signerAddress, factoryOwner]);
 
+  const handleLotteryCreated = async () => {
+    fetchLotteryCount();
+  }
+
+  const handleReload = async () => {
+    setLotteryCount(0)
+    fetchLotteryCount();
+    fetchCurrentBlock();
+  }
+
   return (
     <div className="lottery-index">
       {
-        isFactoryOwner &&
         <div className="lottery-admin">
           <Row>
-            <Col span={24}>
-              <LotteryNew
-                factoryContract={factoryContract}
-                visible={newLotteryVisible}
-                setVisible={setNewLotteryVisible}
-              />
+            <Col span={4}>
+              {
+                isFactoryOwner &&
+                <LotteryNew
+                  factoryContract={factoryContract}
+                  visible={newLotteryVisible}
+                  setVisible={setNewLotteryVisible}
+                  onCreate={handleLotteryCreated}
+                />
+              }
+            </Col>
+            <Col span={4}>
+              { targetNetwork.name === 'localhost' &&
+                <AdminTool
+                  userSigner={userSigner}
+                  localProvider={localProvider}
+                  targetNetwork={targetNetwork}
+                  currentBlock={currentBlock}
+                />
+              }
+              <a style={{ marginLeft: "15px" }} onClick={handleReload}>Reload</a>
             </Col>
           </Row>
         </div>
@@ -82,6 +119,7 @@ function LotteryIndex({ userSigner, localProvider, targetNetwork }) {
         localProvider={localProvider}
         factoryContract={factoryContract}
         currentBlock={currentBlock}
+        lotteryCount={lotteryCount}
       />
 
     </div>

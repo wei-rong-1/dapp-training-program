@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
-// import "hardhat-deploy-ethers";
+import "hardhat-deploy-ethers";
 
 task('hasher', 'Compile Poseidon hasher').setAction(async () => {
   require('./scripts/compileHasher.ts')
@@ -22,6 +22,7 @@ const config: HardhatUserConfig = {
       tags: ["hardhat"],
       // forking: {
       //   url: "https://rpc.vvs.finance",
+      //   blockNumber: 3961075,
       // }
     },
     localhost: {
